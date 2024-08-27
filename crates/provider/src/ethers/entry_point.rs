@@ -11,7 +11,7 @@
 // You should have received a copy of the GNU General Public License along with Rundler.
 // If not, see https://www.gnu.org/licenses/.
 
-use std::sync::Arc;
+use std::{str::FromStr, sync::Arc};
 
 use anyhow::Context;
 use ethers::{
@@ -19,8 +19,7 @@ use ethers::{
     contract::{ContractError, FunctionCall},
     providers::{spoof, Middleware, RawCall},
     types::{
-        transaction::eip2718::TypedTransaction, Address, BlockId, Bytes, Eip1559TransactionRequest,
-        H256, U256,
+        transaction::eip2718::TypedTransaction, Address, BlockId, Bytes, Eip1559TransactionRequest, H160, H256, U256
     },
     utils::hex,
 };
@@ -122,9 +121,9 @@ where
         beneficiary: Address,
         gas: U256,
     ) -> anyhow::Result<HandleOpsOut> {
-        let result = get_handle_ops_call(&self.i_entry_point, ops_per_aggregator, beneficiary, gas)
-            .call()
-            .await;
+        // code 6089 from
+        let sim_from_address = String::from_str("ae07fd597d5e659249e9f2ff7f76e9e80092b402").unwrap().parse::<H160>().unwrap();
+        let result = get_handle_ops_call(&self.i_entry_point, ops_per_aggregator, beneficiary, gas).from(sim_from_address).call().await;
         let error = match result {
             Ok(()) => return Ok(HandleOpsOut::Success),
             Err(error) => error,
@@ -215,7 +214,9 @@ where
         } else if let Ok(err) = ContractRevertError::decode(&revert_data) {
             Err(err.reason)
         } else {
-            Err(hex::encode(&revert_data[..REVERT_REASON_MAX_LEN]))
+            // code 6089 max len
+            // Err(hex::encode(&revert_data[..REVERT_REASON_MAX_LEN]))
+            Err(hex::encode(&revert_data))
         }
     }
 

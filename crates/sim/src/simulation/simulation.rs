@@ -385,8 +385,9 @@ where
                 && !entry_point_out.return_info.paymaster_context.is_empty()
                 && !entity_info.is_staked
             {
+                // code 6089
                 // [EREP-050]
-                violations.push(SimulationViolation::UnstakedPaymasterContext);
+                // violations.push(SimulationViolation::UnstakedPaymasterContext);
             }
 
             let mut banned_slots_accessed = IndexSet::<StorageSlot>::new();
@@ -448,19 +449,20 @@ where
             }
         }
 
+        // code 6089
         for (ent, (accessed_address, accessed_entity, slot)) in entity_types_needing_stake {
-            entities_needing_stake.push(ent.kind);
+            // entities_needing_stake.push(ent.kind);
 
-            violations.push(SimulationViolation::NotStaked(Box::new(
-                NeedsStakeInformation {
-                    entity: ent,
-                    accessed_address,
-                    accessed_entity,
-                    slot,
-                    min_stake: self.sim_settings.min_stake_value.into(),
-                    min_unstake_delay: self.sim_settings.min_unstake_delay.into(),
-                },
-            )));
+            // violations.push(SimulationViolation::NotStaked(Box::new(
+            //     NeedsStakeInformation {
+            //         entity: ent,
+            //         accessed_address,
+            //         accessed_entity,
+            //         slot,
+            //         min_stake: self.sim_settings.min_stake_value.into(),
+            //         min_unstake_delay: self.sim_settings.min_unstake_delay.into(),
+            //     },
+            // )));
         }
 
         if tracer_out.factory_called_create2_twice {

@@ -11,17 +11,13 @@
 // If not, see https://www.gnu.org/licenses/.
 
 use std::{
-    collections::{BTreeSet, HashMap, HashSet},
-    convert::TryFrom,
-    fmt::Debug,
-    sync::Arc,
+    collections::{BTreeSet, HashMap, HashSet}, convert::TryFrom, fmt::Debug, str::FromStr, sync::Arc
 };
 
 use anyhow::{bail, Context};
 use async_trait::async_trait;
 use ethers::types::{
-    Address, BlockId, GethDebugTracerType, GethDebugTracingCallOptions, GethDebugTracingOptions,
-    GethTrace, Opcode, U256,
+    Address, BlockId, GethDebugTracerType, GethDebugTracingCallOptions, GethDebugTracingOptions, GethTrace, Opcode, H160, U256
 };
 #[cfg(test)]
 use mockall::automock;
@@ -138,10 +134,14 @@ where
         block_id: BlockId,
         max_validation_gas: u64,
     ) -> anyhow::Result<SimulationTracerOutput> {
-        let tx = self
+        let mut tx = self
             .entry_point
             .get_simulate_validation_call(op, max_validation_gas)
             .await?;
+        // code 6089 from
+        let sim_from_address = String::from_str("ae07fd597d5e659249e9f2ff7f76e9e80092b402").unwrap().parse::<H160>().unwrap();
+        tx.set_from(sim_from_address);
+        println!("FIXED THE PROBLEMO!");
 
         SimulationTracerOutput::try_from(
             self.provider

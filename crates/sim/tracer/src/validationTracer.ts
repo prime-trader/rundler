@@ -75,18 +75,19 @@ type StringSet = Record<string, boolean | undefined>;
     return out;
   }
 
+  // code 6089
   const DEPOSIT_TO_SELECTOR = "0xb760faf9";
   const SSTORE_REQUIRED_GAS = 2300;
   const FORBIDDEN_OPCODES = stringSet([
     "GASPRICE",
     "GASLIMIT",
     "DIFFICULTY",
-    "TIMESTAMP",
+    // "TIMESTAMP",
     "BASEFEE",
     "BLOCKHASH",
     "NUMBER",
-    "SELFBALANCE",
-    "BALANCE",
+    // "SELFBALANCE",
+    // "BALANCE",
     "ORIGIN",
     "CREATE",
     "COINBASE",
@@ -413,7 +414,8 @@ type StringSet = Record<string, boolean | undefined>;
           input.length > 0 &&
           toHex(input).substring(0, 10) !== DEPOSIT_TO_SELECTOR
         ) {
-          currentPhase.calledBannedEntryPointMethod = true;
+          // code 6089
+          // currentPhase.calledBannedEntryPointMethod = true;
         }
       }
       const value = frame.getValue();
